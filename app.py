@@ -23,7 +23,7 @@ import numpy as np
 # Configure Streamlit page
 st.set_page_config(
     page_title="Toolly Studio",
-    page_icon="🎨",
+    page_icon="✨",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -250,10 +250,10 @@ def main():
 
     # Main tabs
     tabs = st.tabs([
-        "🎨 Generate Image",
-        "🖼️ Lifestyle Shot",
-        "🎨 Generative Fill",
-        "🎨 Erase Elements"
+        "🪄 Generate Image",
+        "📸 Lifestyle Shot",
+        "🧩 Generative Fill",
+        "🧽 Erase Elements"
     ])
     
     # Generate Images Tab
