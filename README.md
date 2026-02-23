@@ -121,7 +121,7 @@ graph LR
 
 1. **Clone the repository:**
 ```bash
-git clone [https://github.com/AdilShamim8/Toolly_Studio.git](https://github.com/AdilShamim8/Toolly_Studio.git)
+git clone https://github.com/AdilShamim8/Toolly_Studio.git
 cd Toolly_Studio
 
 ```
