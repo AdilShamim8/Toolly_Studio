@@ -13,6 +13,78 @@ A powerful Streamlit app for generating professional product ads using Bria AI's
 - 🎮 Intuitive UI controls
 - 💾 Easy image download
 
+```mermaid
+graph LR
+    %% Custom Styling
+    classDef root fill:#7c3aed,stroke:#fff,stroke-width:3px,color:#fff,font-weight:bold
+    classDef folder fill:#3b82f6,stroke:#fff,stroke-width:2px,color:#fff
+    classDef file fill:#f3f4f6,stroke:#cbd5e1,stroke-width:1px,color:#334155
+    classDef feature fill:#10b981,stroke:#fff,stroke-width:2px,color:#fff
+    classDef note fill:#fef08a,stroke:#eab308,stroke-width:1px,color:#854d0e
+
+    %% Project Root
+    Root["✨ Toolly_Studio<br/>(Streamlit + Bria AI)"]:::root
+
+    %% Directories
+    subgraph Architecture ["📂 Project Architecture"]
+        direction TB
+        Components[/"📁 components/"/]:::folder
+        Services[/"📁 services/"/]:::folder
+        Workflows[/"📁 workflows/"/]:::folder
+    end
+
+    %% Root Files
+    subgraph RootFiles ["📄 Root Files"]
+        App["app.py<br/>(Main Entry Point)"]:::file
+        Env[".env<br/>(BRIA_API_KEY)"]:::note
+        Readme["README.md"]:::file
+        License["LICENSE"]:::file
+    end
+
+    %% Features Mapping
+    subgraph Features ["🌟 App Features"]
+        direction TB
+        F1("🖼️ HD Image Gen"):::feature
+        F2("🎯 BG Removal"):::feature
+        F3("🌅 Real Shadows"):::feature
+        F4("🏠 Lifestyle Shots"):::feature
+        F5("✨ AI Prompts"):::feature
+    end
+
+    %% Tree Connections
+    Root --> RootFiles
+    Root --> Architecture
+
+    %% Directory Contents
+    Components --> C1("image_preview.py"):::file
+    Components --> C2("sidebar.py"):::file
+    Components --> C3("uploader.py"):::file
+
+    Services --> S1("__init__.py"):::file
+    Services --> S2("background_service.py"):::file
+    Services --> S3("erase_foreground.py"):::file
+    Services --> S4("generative_fill.py"):::file
+    Services --> S5("hd_image_generation.py"):::file
+    Services --> S6("lifestyle_shot.py"):::file
+    Services --> S7("packshot.py"):::file
+    Services --> S8("prompt_enhancement.py"):::file
+    Services --> S9("shadow.py"):::file
+
+    Workflows --> W1("generate_ad_set.py"):::file
+
+    %% Logic / Data Flow
+    App -.->|"Renders UI"| Components
+    App -.->|"Executes"| Workflows
+    Workflows -.->|"Consumes APIs"| Services
+    
+    %% Mapping Services to Features
+    S5 -.-> F1
+    S2 -.-> F2
+    S9 -.-> F3
+    S6 -.-> F4
+    S8 -.-> F5
+```
+
 ## 🚀 Quick Start
 
 1. Clone the repository:
