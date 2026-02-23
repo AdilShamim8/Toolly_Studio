@@ -11,7 +11,7 @@ from services import (
     generate_hd_image,
     erase_foreground
 )
-from PIL import Image
+from PIL import Image, ImageFilter
 import io
 import requests
 import json
@@ -19,8 +19,6 @@ import time
 import base64
 from streamlit_drawable_canvas import st_canvas
 import numpy as np
-from services.erase_foreground import erase_foreground
-from components.uploader import render_uploader
 
 # Configure Streamlit page
 st.set_page_config(
@@ -33,157 +31,114 @@ st.set_page_config(
 # Custom CSS for aesthetic improvements
 st.markdown("""
 <style>
-/* General styling for a clean, modern look */
-body {
-    font-family: 'Inter', sans-serif; /* Modern font */
-    background-color: #1E1E1E; /* Dark background */
-    color: #FFFFFF; /* White text */
-}
-
-/* Main title styling with a subtle animation */
-h1 {
-    color: #a0d9ef; /* Primary color */
-    text-align: center;
-    font-size: 3.5em; /* Slightly larger */
-    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7); /* More pronounced shadow */
-    letter-spacing: 1px;
-    margin-bottom: 40px; /* More space below title */
-    animation: fadeInDown 1s ease-out; /* Animation */
-}
-
-/* Keyframes for animations */
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translate3d(0, -20px, 0);
+    :root {
+        --primary: #76c4f2;
+        --primary-hover: #62b8ea;
+        --bg: #111827;
+        --panel: #1f2937;
+        --panel-soft: #243244;
+        --border: #334155;
+        --text: #f8fafc;
+        --text-muted: #cbd5e1;
     }
-    to {
-        opacity: 1;
-        transform: none;
+
+    .stApp {
+        background: radial-gradient(circle at top, #1e293b 0%, var(--bg) 45%);
+        color: var(--text);
     }
-}
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translate3d(0, 20px, 0);
+    .block-container {
+        max-width: 1200px;
+        padding-top: 1.4rem;
+        padding-bottom: 2rem;
     }
-    to {
-        opacity: 1;
-        transform: none;
+
+    h1 {
+        color: var(--text);
+        text-align: center;
+        letter-spacing: 0.3px;
+        margin-bottom: 1.25rem;
     }
-}
 
-/* Tab styling with enhanced transitions and hover effects */
-.stTabs [data-baseweb="tab-list"] {
-    gap: 24px;
-    justify-content: center; /* Center the tabs */
-    margin-bottom: 30px; /* Space below tabs */
-}
+    [data-testid="stSidebar"] {
+        border-right: 1px solid var(--border);
+        background: linear-gradient(180deg, var(--panel-soft), var(--panel));
+    }
 
-.stTabs [data-baseweb="tab-list"] button {
-    background-color: #2D2D2D; /* Secondary background color */
-    color: #FFFFFF; /* Text color */
-    border-radius: 10px 10px 0px 0px; /* Slightly more rounded */
-    height: 55px; /* Taller tabs */
-    font-size: 1.3em; /* Larger font */
-    font-weight: 600; /* Semi-bold */
-    padding: 0px 25px;
-    transition: all 0.3s ease-in-out; /* Smooth transition for all properties */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow */
-}
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3,
+    [data-testid="stSidebar"] label {
+        color: var(--text);
+    }
 
-.stTabs [data-baseweb="tab-list"] button:hover {
-    background-color: #a0d9ef; /* Primary color on hover */
-    color: #1E1E1E; /* Darker text for contrast */
-    transform: translateY(-3px); /* Lift effect on hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5); /* More pronounced shadow on hover */
-}
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 0.5rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1rem;
+    }
 
-.stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
-    background-color: #a0d9ef; /* Primary color for selected tab */
-    color: #1E1E1E; /* Darker text for contrast */
-    border-bottom: 4px solid #a0d9ef; /* Thicker highlight */
-    transform: translateY(-2px); /* Slight lift for selected */
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4); /* Shadow for selected */
-}
+    .stTabs [data-baseweb="tab"] {
+        background: rgba(15, 23, 42, 0.55);
+        border: 1px solid transparent;
+        border-radius: 10px 10px 0 0;
+        color: var(--text-muted);
+        padding: 0.45rem 1rem;
+        transition: all 0.2s ease;
+    }
 
-/* Sidebar styling */
-.st-emotion-cache-1ldf151 > div {
-    background-color: #2D2D2D; /* Secondary background color */
-    border-right: 2px solid #a0d9ef; /* Accent border */
-    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.4); /* Shadow for depth */
-}
+    .stTabs [data-baseweb="tab"]:hover {
+        color: var(--text);
+        border-color: var(--border);
+    }
 
-/* General text input styling */
-.st-emotion-cache-1c7y2c1 input,
-.st-emotion-cache-1c7y2c1 textarea {
-    background-color: #3C3C3C;
-    color: #FFFFFF;
-    border-radius: 8px; /* More rounded corners */
-    border: 1px solid #555555;
-    padding: 10px 15px; /* More padding */
-    transition: border-color 0.3s, box-shadow 0.3s; /* Smooth transition */
-}
+    .stTabs [aria-selected="true"] {
+        color: var(--text) !important;
+        border-color: var(--primary) !important;
+        background: rgba(30, 41, 59, 0.9) !important;
+    }
 
-.st-emotion-cache-1c7y2c1 input:focus,
-.st-emotion-cache-1c7y2c1 textarea:focus {
-    border-color: #a0d9ef; /* Highlight on focus */
-    box-shadow: 0 0 8px rgba(160, 217, 239, 0.6); /* Glow effect on focus */
-    outline: none;
-}
+    [data-testid="stButton"] > button {
+        border-radius: 10px;
+        border: 1px solid var(--primary);
+        background: var(--primary);
+        color: #0f172a;
+        font-weight: 600;
+        transition: transform 0.15s ease, background-color 0.2s ease;
+    }
 
-/* Buttons styling with hover and active effects */
-.st-emotion-cache-nahz7x button {
-    background-color: #a0d9ef;
-    color: #1E1E1E;
-    border-radius: 10px; /* More rounded */
-    font-weight: bold;
-    padding: 12px 25px; /* More padding */
-    font-size: 1.1em; /* Slightly larger text */
-    transition: all 0.3s ease-in-out; /* Smooth transitions */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Shadow */
-}
+    [data-testid="stButton"] > button:hover {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+    }
 
-.st-emotion-cache-nahz7x button:hover {
-    background-color: #8acfe2; /* Slightly darker primary on hover */
-    color: #1E1E1E;
-    transform: translateY(-2px); /* Lift effect */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6); /* Stronger shadow */
-}
+    [data-baseweb="input"],
+    [data-baseweb="textarea"] {
+        border-radius: 10px !important;
+        border: 1px solid var(--border) !important;
+        background-color: rgba(15, 23, 42, 0.78) !important;
+        color: var(--text) !important;
+    }
 
-.st-emotion-cache-nahz7x button:active {
-    transform: translateY(0); /* Press effect */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Reduced shadow */
-}
+    [data-baseweb="select"] > div {
+        border-radius: 10px !important;
+        border: 1px solid var(--border) !important;
+        background-color: rgba(15, 23, 42, 0.78) !important;
+    }
 
-/* Enhancing markdown elements */
-.st-emotion-cache-eqf69g p {
-    line-height: 1.6; /* Better readability for paragraphs */
-}
+    [data-testid="stAlert"] {
+        border-radius: 10px;
+        border: 1px solid var(--border);
+    }
 
-/* Specific styling for the prompt enhancement markdown */
-.st-emotion-cache-eqf69g strong {
-    color: #a0d9ef; /* Primary color for strong text */
-}
-
-.st-emotion-cache-eqf69g em {
-    color: #CCCCCC; /* Lighter text for emphasis */
-}
+    p, label {
+        color: var(--text-muted);
+    }
 
 </style>
 """, unsafe_allow_html=True)
 
 # Load environment variables
-print("Loading environment variables...")
-load_dotenv(verbose=True)  # Add verbose=True to see loading details
-
-# Debug: Print environment variable status
-api_key = os.getenv("BRIA_API_KEY")
-print(f"API Key present: {bool(api_key)}")
-print(f"API Key value: {api_key if api_key else 'Not found'}")
-print(f"Current working directory: {os.getcwd()}")
-print(f".env file exists: {os.path.exists('.env')}")
+load_dotenv()
 
 def initialize_session_state():
     """Initialize session state variables."""
@@ -233,7 +188,7 @@ def apply_image_filter(image, filter_type):
         elif filter_type == "High Contrast":
             return img.point(lambda x: x * 1.5)
         elif filter_type == "Blur":
-            return img.filter(Image.BLUR)
+            return img.filter(ImageFilter.BLUR)
         else:
             return img
     except Exception as e:
@@ -289,6 +244,7 @@ def main():
     with st.sidebar:
         st.header("Settings")
         api_key = st.text_input("Enter your API key:", value=st.session_state.api_key if st.session_state.api_key else "", type="password")
+        st.markdown("[Get your Bria API key](https://platform.bria.ai/console/account/api-keys)")
         if api_key:
             st.session_state.api_key = api_key
 
@@ -339,12 +295,6 @@ def main():
                         except Exception as e:
                             st.error(f"Error enhancing prompt: {str(e)}")
                             
-            # Debug information
-            st.write("Debug - Session State:", {
-                "original_prompt": st.session_state.get("original_prompt"),
-                "enhanced_prompt": st.session_state.get("enhanced_prompt")
-            })
-        
         with col2:
             num_images = st.slider("Number of images", 1, 4, 1)
             aspect_ratio = st.selectbox("Aspect ratio", ["1:1", "16:9", "9:16", "4:3", "3:4"])
@@ -383,9 +333,6 @@ def main():
                     )
                     
                     if result:
-                        # Debug logging
-                        st.write("Debug - Raw API Response:", result)
-                        
                         if isinstance(result, dict):
                             if "result_url" in result:
                                 st.session_state.edited_image = result["result_url"]
@@ -664,9 +611,6 @@ def main():
                                     )
                                     
                                     if result:
-                                        # Debug logging
-                                        st.write("Debug - Raw API Response:", result)
-                                        
                                         if sync_mode:
                                             if isinstance(result, dict):
                                                 if "result_url" in result:
@@ -769,9 +713,6 @@ def main():
                                     )
                                     
                                     if result:
-                                        # Debug logging
-                                        st.write("Debug - Raw API Response:", result)
-                                        
                                         if sync_mode:
                                             if isinstance(result, dict):
                                                 if "result_url" in result:
@@ -962,8 +903,6 @@ def main():
                             )
                             
                             if result:
-                                st.write("Debug - API Response:", result)
-                                
                                 if sync_mode:
                                     if "urls" in result and result["urls"]:
                                         st.session_state.edited_image = result["urls"][0]

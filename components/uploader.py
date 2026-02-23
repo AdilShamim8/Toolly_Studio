@@ -1,12 +1,15 @@
 import streamlit as st
-import magic
+from PIL import Image, UnidentifiedImageError
 import io
 
 def is_valid_image(file_content):
     """Validate if the uploaded file is an image."""
-    mime = magic.Magic(mime=True)
-    file_type = mime.from_buffer(file_content)
-    return file_type.startswith('image/')
+    try:
+        image = Image.open(io.BytesIO(file_content))
+        image.verify()
+        return True
+    except (UnidentifiedImageError, OSError, ValueError):
+        return False
 
 def render_uploader():
     """Render the image upload component with validation."""
