@@ -1,17 +1,39 @@
 # ✨ Toolly Studio
 
-A powerful Streamlit app for generating professional product ads using Bria AI's advanced image generation and manipulation APIs.
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://streamlit.io)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
-## 🌟 Features
+**Toolly Studio** is a powerful, intuitive Streamlit web application designed to generate professional-grade product advertisements. By leveraging **Bria AI's** advanced image generation and manipulation APIs, Toolly Studio transforms simple product descriptions or raw images into stunning, market-ready marketing assets.
 
-- 🖼️ Generate HD product images from text prompts
-- 🎯 Remove backgrounds with custom colors
-- 🌅 Add realistic shadows
-- 🏠 Create lifestyle shots with text or reference images
-- ✨ AI-powered prompt enhancement
-- 📝 Optional CTA text overlay
-- 🎮 Intuitive UI controls
-- 💾 Easy image download
+##  Table of Contents
+- [Features](#-features)
+- [Architecture](#-architecture)
+- [Getting Started](#-getting-started)
+- [Usage Guide](#-usage-guide)
+- [Configuration](#-configuration)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+---
+
+## Features
+
+Toolly Studio provides an end-to-end pipeline for product marketing imagery:
+
+- **🖼️ HD Image Generation:** Create high-fidelity product images directly from text prompts.
+- **🎯 Smart Background Removal:** Instantly isolate subjects and replace backgrounds with custom hex colors.
+- **🌅 Dynamic Shadows:** Ground your products in reality with adjustable, realistic drop shadows.
+- **🏠 Contextual Lifestyle Shots:** Place your products into stunning scenes using text descriptions or reference images.
+- **✨ AI Prompt Enhancement:** Let AI rewrite your basic prompts into highly optimized generation instructions.
+- **📝 CTA Overlays:** Drive conversions by embedding optional Call-To-Action text directly onto your graphics.
+- **💾 One-Click Export:** Download your generated assets instantly.
+
+---
+
+## Architecture
+
+Toolly Studio is built with a modular, scalable architecture. Here is a high-level overview of the data flow and directory structure:
 
 ```mermaid
 graph LR
@@ -83,66 +105,103 @@ graph LR
     S9 -.-> F3
     S6 -.-> F4
     S8 -.-> F5
+
 ```
 
-## 🚀 Quick Start
+---
 
-1. Clone the repository:
+## Getting Started
+
+### Prerequisites
+
+* Python 3.8 or higher
+* A [Bria AI](https://bria.ai) API Key
+
+### Installation
+
+1. **Clone the repository:**
 ```bash
-git clone https://github.com/AdilShamim8/Toolly_Studio.git
-cd adsnap-studio
+git clone [https://github.com/AdilShamim8/Toolly_Studio.git](https://github.com/AdilShamim8/Toolly_Studio.git)
+cd Toolly_Studio
+
 ```
 
-2. Install dependencies:
+
+2. **Install dependencies:**
+It is recommended to use a virtual environment.
 ```bash
 pip install -r requirements.txt
+
 ```
 
-3. Create a `.env` file in the root directory:
+
+3. **Configure Environment Variables:**
+Create a `.env` file in the root directory and add your API key:
 ```bash
-BRIA_API_KEY=your_api_key_here
+echo "BRIA_API_KEY=your_api_key_here" > .env
+
 ```
 
-4. Run the app:
+
+4. **Launch the application:**
 ```bash
 streamlit run app.py
+
 ```
 
-## 💡 Usage
 
-1. Enter a product description or upload an image
-2. Configure generation options in the sidebar:
-   - Enhance prompt with AI
-   - Remove background
-   - Add shadows
-   - Generate lifestyle shots
-3. Adjust advanced settings like background color and shadow intensity
-4. Click "Generate Ad" to create your images
-5. Download the results
 
-## 🔧 Configuration
+---
 
-The app supports various configuration options through the UI:
+## Usage Guide
 
-- **Prompt Enhancement**: Improve your text prompts with AI
-- **Background Removal**: Remove backgrounds with custom colors
-- **Shadow Effects**: Add realistic shadows with adjustable intensity
-- **Lifestyle Shots**: Place products in context using text or reference images
-- **CTA Text**: Add optional call-to-action text overlays
+1. **Input Generation:** Start by entering a text description of your product or uploading an existing base image via the main interface.
+2. **Configure Pipeline:** Use the left sidebar to toggle the features you need:
+* *AI Prompt Enhancement*
+* *Background Removal*
+* *Shadow Generation*
+* *Lifestyle Context*
 
-## 🤝 Contributing
+
+3. **Fine-Tune:** Adjust advanced sliders for specific requirements (e.g., custom hex codes for backgrounds, shadow intensity, or CTA text).
+4. **Generate:** Click **Generate Ad**. Toolly Studio will orchestrate the workflows and hit the necessary Bria AI endpoints.
+5. **Export:** Preview the results directly in the UI and click the download button to save your assets.
+
+---
+
+## Configuration Options
+
+Toolly Studio exposes several parameters through the Streamlit UI to give you granular control over the final output:
+
+| Feature | Configuration Options |
+| --- | --- |
+| **Prompt Enhancement** | Toggle on/off for AI-driven prompt rewriting. |
+| **Background Removal** | Toggle on/off, set custom HEX color for the new background. |
+| **Shadow Effects** | Toggle on/off, adjust opacity/intensity sliders. |
+| **Lifestyle Shots** | Provide a contextual text prompt or upload a reference scene image. |
+| **CTA Text** | Input custom string, select basic positioning/overlay styles. |
+
+---
+
+## Contributing
+
+We welcome contributions to make Toolly Studio even better!
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📝 License
+---
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## License
 
-## 🙏 Acknowledgments
+Distributed under the MIT License. See `LICENSE` for more information.
 
-- [Bria AI](https://bria.ai) for their powerful image generation APIs
-- [Streamlit](https://streamlit.io) for the amazing web framework 
+---
+
+## Acknowledgments
+
+* **[Bria AI](https://bria.ai)** - For their incredibly robust image generation APIs.
+* **[Streamlit](https://streamlit.io)** - For the rapid, Pythonic web framework that powers this UI.
